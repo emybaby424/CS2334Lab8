@@ -63,14 +63,13 @@ public class BoardGame {
 	 * Remember that game pieces are unique, and are assigned to a unique player (i.e. it is a one-to-one relationship).
 	 */
 	public String getPlayerWithGamePiece(GamePiece gamePiece) {
-		String temp = "";
 		Set<String> player = playerPieces.keySet();
 		for (String name : player) {
 			if(playerPieces.get(name) == gamePiece) {
-				temp = name;
+				return name;
 			}
 		}
-		return temp;
+		return null;
 	}
 
 	
@@ -81,7 +80,6 @@ public class BoardGame {
 	 * is essentially equivalent to "moving the player's game piece".
 	 */
 	public void movePlayer(String playerName, Location newLocation) {
-		GamePiece temp = playerPieces.get(playerName);
 		playerLocations.remove(playerName);
 		playerLocations.put(playerName, newLocation);
 	}
