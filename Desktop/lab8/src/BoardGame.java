@@ -1,14 +1,10 @@
-
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class BoardGame {
-  /**
+	/**
 	 * Each player is associated with a unique game piece (i.e.
 	 */
 	protected  LinkedHashMap<String, GamePiece> playerPieces;
@@ -19,14 +15,17 @@ public class BoardGame {
 	 */
 	protected LinkedHashMap<String, Location> playerLocations;
   
-  /**
-  * BoardGame Constructor
-  */
-  public BoardGame(){
-  }
+	/**
+	 * BoardGame Constructor
+	 */
+	public BoardGame(){
+		playerPieces = new LinkedHashMap<String, GamePiece>();
+		playerLocations = new LinkedHashMap<String, Location>();
+		
+	}
   
   
-  /**
+	/**
 	 * Adds a player to the board game object. Players are uniquely associated with a game piece. 
 	 * These game pieces represent the player in the board game. 
 	 * Each player has only one game piece, and each game piece can be associated with only one player. 
@@ -37,6 +36,15 @@ public class BoardGame {
 	 */
 	public boolean addPlayer(String playerName, GamePiece gamePiece, Location initialLocation) {
 		
+		if (playerPieces.containsKey(playerName)) {
+			return false;
+		}
+		else {
+		playerLocations.put(playerName, initialLocation);
+		playerPieces.put(playerName,  gamePiece);
+		
+			return true;
+		}
 	}
 	
 	
@@ -45,8 +53,8 @@ public class BoardGame {
 	 * Remember that game pieces are unique, and are assigned to a unique player (i.e. it is a one-to-one relationship).
 	 */
 	public GamePiece getPlayerGamePiece(String playerName) {
-		return playerPieces().get(playerName);
 		
+		return playerPieces.get(playerName);
 	}
 	
 	
@@ -55,9 +63,15 @@ public class BoardGame {
 	 * Remember that game pieces are unique, and are assigned to a unique player (i.e. it is a one-to-one relationship).
 	 */
 	public String getPlayerWithGamePiece(GamePiece gamePiece) {
-		
-		return playerPieces().get(gamePiece);
+		String temp = "";
+		Set<String> player = playerPieces.keySet();
+		for (String name : player) {
+			if(playerPieces.get(name) == gamePiece) {
+				temp = name;
 			}
+		}
+		return temp;
+	}
 
 	
 	
@@ -67,13 +81,14 @@ public class BoardGame {
 	 * is essentially equivalent to "moving the player's game piece".
 	 */
 	public void movePlayer(String playerName, Location newLocation) {
-		
-		playerLocations().put(playerName, newLocation);
-			}
+		GamePiece temp = playerPieces.get(playerName);
+		playerLocations.remove(playerName);
+		playerLocations.put(playerName, newLocation);
+	}
 	
 	
 	
-	/*
+	/**
 	 * Method to use when two players each want to move at the same time. 
 	 * Movements must be taken individually, so the system must determine which player moves first. 
 	 * Each player is associated with a game piece, and game pieces determine who moves first by the movesFirst() method. 
@@ -83,124 +98,84 @@ public class BoardGame {
 	 * You should leverage the code in the movePlayer() method.
 	 */
 	public String[] moveTwoPlayers(String[] playerNames, Location[] newLocations) {
-		for(int index = 0; index < playerNames.length; index++) {
-			for(int jndex = 0; jndex < playerNames.length; jndex++) {
-				if(index != jndex) {
-					GamePiece one = getPlayerGamePiece(playerNames[index]);
-					GamePiece two = getPlayerGamePiece(playerNames[jndex]);
-					
-					GamePiece three = one.movesFirst(one,two);
-				}
-				
-				
-			}
+		GamePiece first = GamePiece.movesFirst(playerPieces.get(playerNames[0]), playerPieces.get(playerNames[1]));
+		String firstName = getPlayerWithGamePiece(first);
 		
+		if (firstName.equals(playerNames[1])) {
+			String temp = playerNames[1];
+			playerNames[0] = firstName;
+			playerNames[1] = temp;
 		}
 		
+		movePlayer(playerNames[0], newLocations[0]);
+		movePlayer(playerNames[1], newLocations[1]);
+		
+		return playerNames;
 	}
 	
-	
-	/*
-	 *Gets the location of a player. Be careful that you don't confuse this with getPlayerLocations!
-	 */
 	public Location getPlayersLocation(String player) {
-		return playerLocations().get(player);
+		return playerLocations.get(player);
 	}
 	
 	
-	/*
+	/**
 	 * Given a location, find all players at that location.
 	 */
 	public ArrayList<String> getPlayersAtLocation(Location loc) {
-		int counter = 0;
-		Set<String> players = playerLocations().keySet();
-		for (Location place: playerLocations().values()) {
-			if(loc==playerLocations().values()) {
-				counter++;
-			}
-			else {
-				players.remove(counter);
-				
-			}
-		}
-		ArrayList<String> playersHere = new ArrayList<String>();
-		 for(String index: players) {
-			 playersHere.add(index);
-		 }
-		 return playersHere;
+		
+		ArrayList<String> playersAtLocation = new ArrayList<String>();
 
+		Set<String> players = playerLocations.keySet();
+		for (String temp: players) {
+			if(playerLocations.get(temp) == loc) {
+				playersAtLocation.add(temp);
+			}
+		}
+		
+		return playersAtLocation;
 	}
 	
-	//Given a location
-	//find the game pieces associated with all the players at that location.
+	
 	public ArrayList<GamePiece> getGamePiecesAtLocation(Location loc) {
-		Set<GamePiece>pieces = new HashSet<GamePiece>();
-		int counter = 0;
-		Set<String> players = playerLocations().keySet();
-		for (Location place: playerLocations().values()) {
-			if(loc==playerLocations().values()) {
-				counter++;
-			}
-			else {
-				players.remove(counter);
-				
-			}
+		
+		ArrayList<GamePiece> piecesAtLocation = new ArrayList<GamePiece>();
+		for (String temp : getPlayersAtLocation(loc)) {
+			piecesAtLocation.add(getPlayerGamePiece(temp));
 		}
-		int counter2 = 0;
- ArrayList<String> newPlay = new ArrayList<String>();
- for(String index: players) {
-	 newPlay.add(index);
- }
-    
-	
-		for (String matchName: playerPieces().keySet()) {
-        	   if(newPlay.get(counter2)==matchName) {
-        		   pieces.add(playerPieces().get(matchName));
-        	   }
-    } 
-		ArrayList<GamePiece> returning = new ArrayList<GamePiece>();
-		for(GamePiece newOnes: pieces) {
-			returning.add(newOnes);
-		}
-		return returning;
+		
+		return piecesAtLocation;
 	}
 	
-	
-	/*
-	 * Gets all players recorded in the game.
-	 */
 	public Set<String> getPlayers() {
-		Set<String>keys = playerPieces().keySet();
+		Set<String> keys = playerPieces.keySet();
 		return keys;	
 	}
 	
 	
-	/*
+	/**
 	 * Gets all locations that the players are at (not all possible locations).
 	 */
 	public Set<Location> getPlayerLocations() {
-		Set<Location>places= new HashSet<Location>();
-		for (Location place: playerLocations().values()) {
-        	   places.add(place);
+		Set<Location> locations = new HashSet<Location>();
+		
+		for (String temp: playerLocations.keySet()) {
+        	   locations.add(getPlayersLocation(temp));
     } 
 		
-		return places;
+		return locations;
 
-		
 	}
 	
 	
-	/*
+	/**
 	 * Gets all game pieces associated with the players (not all possible game pieces).
 	 */
 	public Set<GamePiece> getPlayerPieces() {
 		Set<GamePiece>pieces = new HashSet<GamePiece>();
-		for (GamePiece piece: playerPieces().values()) {
+		for (GamePiece piece: playerPieces.values()) {
         	   pieces.add(piece);
     } 
 		
 		return pieces;
 	}
-}
-  
 }
