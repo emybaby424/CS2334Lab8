@@ -51,11 +51,27 @@ public class BoardGameTest {
 	    Location[] loc = new Location[2];
 	    loc[0] = Location.CONSERVATORY;
 	    loc[1] = Location.BILLIARD_ROOM;
-	    
+	   
 	    g.moveTwoPlayers(name, loc);
-	    
 	    Assert.assertEquals(Location.CONSERVATORY, g.getPlayersLocation("cesar"));
 	    Assert.assertEquals(Location.BILLIARD_ROOM, g.getPlayersLocation("alex"));
+	    
+		BoardGame g2 = new BoardGame();
+	    g2.addPlayer("lucy", GamePiece.YELLOW_BOOT, Location.KITCHEN);
+    	g2.addPlayer("emy", GamePiece.RED_THIMBLE, Location.BALLROOM);
+
+	    String[] name2 = new String[2];
+        name2[0] = "emy";
+        name2[1] = "lucy";
+        
+        Location[] loc2 = new Location[2];
+        loc2[0] = Location.CONSERVATORY;
+        loc2[1] = Location.LIBRARY;
+
+	    g2.moveTwoPlayers(name2, loc2);
+	    Assert.assertEquals(Location.CONSERVATORY, g2.getPlayersLocation("lucy"));
+	    Assert.assertEquals(Location.LIBRARY, g2.getPlayersLocation("emy"));
+	    
 
 	}
 	
@@ -69,7 +85,11 @@ public class BoardGameTest {
     	players.add("emy");
     	players.add("cesar");
     	Assert.assertEquals(players, g.getPlayersAtLocation(Location.BALLROOM));
-    	
+        	
+    	Assert.assertEquals(players, g.getPlayersAtLocation(Location.BALLROOM));
+
+    	players.clear();
+    	Assert.assertEquals(players, g.getPlayersAtLocation(Location.BILLIARD_ROOM));
 	}
 	
 	@Test
