@@ -24,11 +24,11 @@ public enum GamePiece{
 	}
 
 	public Color getColor() {
-		return this.getColor();
+		return this.appearance.getColor();
 	}
 
 	public Shape getShape() {
-		return this.getShape();
+		return this.appearance.getShape();
 	}
 
 	public static GamePiece movesFirst(GamePiece a, GamePiece b) {
