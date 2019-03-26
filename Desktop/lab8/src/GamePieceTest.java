@@ -30,7 +30,7 @@ public class GamePieceTest {
 	@Test
 	public void toStringTest() {
         GamePiece b = GamePiece.GREEN_BOOT;
-        Assert.assertEquals("GREEN_BOOT: a GREEN boot with priority 8", b.toString());
+        Assert.assertEquals("GREEN_BOOT: a GREEN BOOT with priority 8", b.toString());
 	}
 
 }
